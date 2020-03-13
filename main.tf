@@ -2,15 +2,15 @@
 provider "google" {
   version = "~> 3.4.0"
   project = "epidemics-270907"
-  region = "us-west1"
-  zone = "us-west1-c"
+  region  = "us-west1"
+  zone    = "us-west1-c"
 }
 
 provider "google-beta" {
   version = "~> 3.4.0"
   project = "epidemics-270907"
-  region = "us-west1"
-  zone = "us-west1-c"
+  region  = "us-west1"
+  zone    = "us-west1-c"
 }
 
 
@@ -20,26 +20,26 @@ data "google_project" "epidemics" {
 
 provider "kubernetes" {
   version = "~> 1.10.0"
-  alias = "epidemics"
+  alias   = "epidemics"
 
-  host = "https://${google_container_cluster.epidemics.endpoint}"
-  token = data.google_client_config.current.access_token
+  host                   = "https://${google_container_cluster.epidemics.endpoint}"
+  token                  = data.google_client_config.current.access_token
   cluster_ca_certificate = base64decode(google_container_cluster.epidemics.master_auth[0].cluster_ca_certificate)
 }
 
 
 resource "google_container_cluster" "epidemics" {
-  provider = google-beta
+  provider           = google-beta
   initial_node_count = 0
-  location = "us-west1-c"
-  name = "epidemics"
-  project = "epidemics-270907"
-  network = "projects/epidemics-270907/global/networks/default"
-  subnetwork = "projects/epidemics-270907/regions/us-west1/subnetworks/default"
+  location           = "us-west1-c"
+  name               = "epidemics"
+  project            = "epidemics-270907"
+  network            = "projects/epidemics-270907/global/networks/default"
+  subnetwork         = "projects/epidemics-270907/regions/us-west1/subnetworks/default"
 
   remove_default_node_pool = true
   ip_allocation_policy {
-    cluster_secondary_range_name = "gke-epidemics-pods-2995938f"
+    cluster_secondary_range_name  = "gke-epidemics-pods-2995938f"
     services_secondary_range_name = "gke-epidemics-services-2995938f"
   }
 
@@ -62,13 +62,13 @@ resource "google_container_cluster" "epidemics" {
 resource "google_container_node_pool" "default-preempt" {
   provider = google-beta
   location = "us-west1-c"
-  project = "epidemics-270907"
+  project  = "epidemics-270907"
 
   cluster = google_container_cluster.epidemics.name
   depends_on = [
-    google_container_cluster.epidemics]
+  google_container_cluster.epidemics]
   initial_node_count = 3
-  name = "default-preempt"
+  name               = "default-preempt"
   node_locations = [
     "us-west1-c",
   ]
@@ -79,16 +79,16 @@ resource "google_container_node_pool" "default-preempt" {
   }
 
   management {
-    auto_repair = true
+    auto_repair  = true
     auto_upgrade = true
   }
 
   node_config {
-    disk_size_gb = 100
-    disk_type = "pd-standard"
-    image_type = "COS"
+    disk_size_gb    = 100
+    disk_type       = "pd-standard"
+    image_type      = "COS"
     local_ssd_count = 0
-    machine_type = "n1-standard-1"
+    machine_type    = "n1-standard-1"
     metadata = {
       "disable-legacy-endpoints" = "true"
     }
@@ -100,13 +100,13 @@ resource "google_container_node_pool" "default-preempt" {
       "https://www.googleapis.com/auth/servicecontrol",
       "https://www.googleapis.com/auth/trace.append",
     ]
-    preemptible = true
+    preemptible     = true
     service_account = "default"
 
   }
 
   upgrade_settings {
-    max_surge = 1
+    max_surge       = 1
     max_unavailable = 0
   }
 }
@@ -121,4 +121,37 @@ resource "kubernetes_namespace" "production" {
   metadata {
     name = "production"
   }
+}
+
+resource "google_compute_global_address" "loadbalance-staging" {
+  name         = "loadbalance-staging"
+  address      = "34.107.213.88"
+  address_type = "EXTERNAL"
+}
+
+resource "google_compute_global_address" "loadbalancer" {
+  name         = "loadbalancer"
+  address      = "34.107.179.11"
+  address_type = "EXTERNAL"
+}
+
+resource "google_compute_address" "charts-static-staging" {
+  name         = "charts-static-staging"
+  address_type = "EXTERNAL"
+  address      = "35.203.189.186"
+  region       = "us-west1"
+}
+
+resource "google_compute_address" "charts-static" {
+  name         = "charts-static"
+  address_type = "EXTERNAL"
+  region       = "us-west1"
+  address      = "35.197.75.206"
+}
+
+resource "google_storage_bucket" "model-data-covid" {
+  name          = "model-data-covid"
+  location      = "US-WEST1"
+  storage_class = "STANDARD"
+  force_destroy = true
 }
