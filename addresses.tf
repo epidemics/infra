@@ -24,9 +24,3 @@ resource "google_compute_address" "charts-static" {
   address      = "35.197.75.206"
 }
 
-resource "google_storage_bucket" "model-data-covid" {
-  name          = "model-data-covid"
-  location      = "US-WEST1"
-  storage_class = "STANDARD"
-  force_destroy = true
-}

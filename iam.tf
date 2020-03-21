@@ -3,6 +3,7 @@ data "google_iam_policy" "admin" {
     members = [
       "serviceAccount:${google_service_account.terraform.email}",
       "user:kotrfa@gmail.com",
+      "user:gavento@gmail.com",
     ]
     role = "roles/owner"
   }
@@ -12,8 +13,17 @@ data "google_iam_policy" "admin" {
       "serviceAccount:657183051434@cloudservices.gserviceaccount.com",
       "serviceAccount:service-657183051434@containerregistry.iam.gserviceaccount.com",
       "user:berykubik@gmail.com",
+      "user:Gajdova.Anna@gmail.com",
+      "user:jacobklagerros@gmail.com",
+      "user:michal.jezku@gmail.com",
     ]
     role = "roles/editor"
+  }
+  binding {
+    members = [
+      "user:pfduc87@gmail.com",
+    ]
+    role = "roles/viewer"
   }
   binding {
     members = [
