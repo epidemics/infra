@@ -5,3 +5,5 @@ $ terraform init
 
 ## TODO:
 1. https://www.terraform.io/docs/providers/google/r/google_project_service.html
+2. notification channels
+3. alerts
