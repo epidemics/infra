@@ -28,8 +28,27 @@ resource "google_container_cluster" "epidemics" {
 
 }
 
+resource "kubernetes_namespace" "staging" {
+  metadata {
+    name = "staging"
+  }
+}
 
-resource "google_container_node_pool" "default-preempt" {
+resource "kubernetes_namespace" "production" {
+  metadata {
+    name = "production"
+  }
+}
+
+resource "google_compute_network" "default-network" {
+  name                            = "default"
+  delete_default_routes_on_create = false
+  auto_create_subnetworks         = true
+  routing_mode                    = "REGIONAL"
+  description                     = "Default network for the project"
+}
+
+resource "google_container_node_pool" "default" {
   provider = google-beta
   location = "us-west1-c"
   project  = "epidemics-270907"
@@ -38,14 +57,14 @@ resource "google_container_node_pool" "default-preempt" {
   depends_on = [
   google_container_cluster.epidemics]
   initial_node_count = 3
-  name               = "default-preempt"
+  name               = "default"
   node_locations = [
     "us-west1-c",
   ]
 
   autoscaling {
     max_node_count = 10
-    min_node_count = 0
+    min_node_count = 3
   }
 
   management {
@@ -70,7 +89,7 @@ resource "google_container_node_pool" "default-preempt" {
       "https://www.googleapis.com/auth/servicecontrol",
       "https://www.googleapis.com/auth/trace.append",
     ]
-    preemptible     = true
+    preemptible     = false
     service_account = "default"
 
   }
@@ -81,22 +100,3 @@ resource "google_container_node_pool" "default-preempt" {
   }
 }
 
-resource "kubernetes_namespace" "staging" {
-  metadata {
-    name = "staging"
-  }
-}
-
-resource "kubernetes_namespace" "production" {
-  metadata {
-    name = "production"
-  }
-}
-
-resource "google_compute_network" "default-network" {
-  name                            = "default"
-  delete_default_routes_on_create = false
-  auto_create_subnetworks         = true
-  routing_mode                    = "REGIONAL"
-  description                     = "Default network for the project"
-}
