@@ -10,17 +10,3 @@ resource "google_compute_global_address" "loadbalancer" {
   address_type = "EXTERNAL"
 }
 
-resource "google_compute_address" "charts-static-staging" {
-  name         = "charts-static-staging"
-  address_type = "EXTERNAL"
-  address      = "35.203.189.186"
-  region       = "us-west1"
-}
-
-resource "google_compute_address" "charts-static" {
-  name         = "charts-static"
-  address_type = "EXTERNAL"
-  region       = "us-west1"
-  address      = "35.197.75.206"
-}
-

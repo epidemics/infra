@@ -19,6 +19,7 @@ data "google_iam_policy" "admin" {
       "user:vesely.v4@gmail.com",
       "user:jeromezng@gmail.com",
       "user:mathijs.henquet@gmail.com",
+      "user:lu.nemec@gmail.com",
     ]
     role = "roles/editor"
   }

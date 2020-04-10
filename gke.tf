@@ -56,7 +56,7 @@ resource "google_container_node_pool" "default" {
   cluster = google_container_cluster.epidemics.name
   depends_on = [
   google_container_cluster.epidemics]
-  initial_node_count = 3
+  initial_node_count = 2
   name               = "default"
   node_locations = [
     "us-west1-c",
