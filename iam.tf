@@ -4,6 +4,8 @@ data "google_iam_policy" "admin" {
       "serviceAccount:${google_service_account.terraform.email}",
       "user:kotrfa@gmail.com",
       "user:gavento@gmail.com",
+      "user:maksym.balatsko@blindspot.ai",
+      "user:jakub.smid@blindspot.ai",
     ]
     role = "roles/owner"
   }
